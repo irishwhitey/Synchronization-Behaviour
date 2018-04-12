@@ -50,6 +50,5 @@ namespace Synchronization_Challenge
             Assert.That(usingTasks, Is.LessThan(notUsingTasks));
             Assert.That(usingTasks, Is.LessThan(TimeSpan.FromSeconds(4).TotalMilliseconds));
         }
-
     }
 }
