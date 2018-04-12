@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -21,7 +20,7 @@ namespace Synchronization_Challenge
                 tasks.Add(Task.Run(() => theClass.AddOne()));    
             }
             tasks.ForEach(t => t.Wait());
-            Assert.That(theClass.GetCounter(),Is.Not.EqualTo(numberOfThreads));
+            Assert.That(theClass.GetCounterWithLock(),Is.Not.EqualTo(numberOfThreads));
         }
 
         [Test]
@@ -32,35 +31,10 @@ namespace Synchronization_Challenge
             var numberOfThreads = 10;
             for (int i = 0; i < numberOfThreads; i++)
             {
-                tasks.Add(Task.Run(() => theClass.AddOneWithSync()));
+                tasks.Add(Task.Run(() => theClass.AddOneWithLock()));
             }
             tasks.ForEach(t => t.Wait());
-            Assert.That(theClass.GetCounter(), Is.EqualTo(numberOfThreads));
-        }
-    }
-
-    public class SingleCountingClass
-    {
-        private int _counter;
-
-        public void AddOne()
-        {
-            var _counterValue = _counter;
-            Thread.Sleep(250);
-            _counter = _counterValue + 1;
-        }
-
-        public int GetCounter()
-        {
-            return _counter;
-        }
-        private readonly object thelock = new object();
-        public void AddOneWithSync()
-        {
-            lock (thelock)
-            {
-                AddOne();
-            }
+            Assert.That(theClass.GetCounterWithLock(), Is.EqualTo(numberOfThreads));
         }
     }
 }

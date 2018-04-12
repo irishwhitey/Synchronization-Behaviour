@@ -59,11 +59,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="3.SynchronisationAlternatives.cs" />
     <Compile Include="ChallengeOne.cs" />
     <Compile Include="HasLongRunningOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="1.Review.cs" />
     <Compile Include="2.SynchronizationTests.cs" />
+    <Compile Include="SingleCountingClass.cs" />
     <Compile Include="TimingHelper.cs" />
   </ItemGroup>
   <ItemGroup>

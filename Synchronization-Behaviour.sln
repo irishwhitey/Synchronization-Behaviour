@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synchronization-Challenge", "Synchronization-Challenge\Synchronization-Challenge.csproj", "{DF6A3BD8-32C6-473A-A6AD-79897CC9BD50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synchronization-Behaviour", "Synchronization-Behaviour\Synchronization-Behaviour.csproj", "{DF6A3BD8-32C6-473A-A6AD-79897CC9BD50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
