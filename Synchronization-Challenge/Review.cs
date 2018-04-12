@@ -31,5 +31,25 @@ namespace Synchronization_Challenge
             Assert.That(withThreadTime, Is.LessThan(noThreadTime));
             Assert.That(withThreadTime, Is.LessThan(TimeSpan.FromSeconds(4).TotalMilliseconds));
         }
+
+        [Test]
+        public void UsingTasks()
+        {
+            var sut = new HasLongRunningOperations();
+            var notUsingTasks = TimingHelper.TimeToRunInMilliseconds(() =>
+            {
+                sut.ThreeSecondOperation();
+                sut.TwoSecondOperation();
+            });
+            var usingTasks = TimingHelper.TimeToRunInMilliseconds(() =>
+            {
+                var task = Task.Run( ()=> sut.ThreeSecondOperation());
+                sut.TwoSecondOperation();
+                task.Wait();
+            });
+            Assert.That(usingTasks, Is.LessThan(notUsingTasks));
+            Assert.That(usingTasks, Is.LessThan(TimeSpan.FromSeconds(4).TotalMilliseconds));
+        }
+
     }
 }
