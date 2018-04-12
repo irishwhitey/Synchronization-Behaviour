@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="3.SynchronisationAlternatives.cs" />
+    <Compile Include="4. Async.cs" />
     <Compile Include="ChallengeOne.cs" />
     <Compile Include="HasLongRunningOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
