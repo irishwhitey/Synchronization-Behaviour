@@ -13,7 +13,7 @@ namespace Synchronization_Challenge
     [TestFixture]
     class Asynchronization
     {
-        private int _magicTimeInMilliseconds = 5200;
+        private int _magicTimeInMilliseconds = 5100;
 
         [Test]
         public void WaitingOnAsyncStuffIsExpensive()
@@ -55,6 +55,16 @@ namespace Synchronization_Challenge
         //    Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(_magicTimeInMilliseconds));
 
         //}
+
+        [Test]
+        public async Task OtherStuffHappensWhenAsyncCalled()
+        {
+            var gg = new GoogleGetter();
+            var task = gg.GetResponseContentTypeAsync();
+            Assert.IsFalse(task.IsCompleted);
+            var p = await task;
+            Assert.IsTrue(task.IsCompleted);
+        }
     }
 
     public class GoogleGetter
