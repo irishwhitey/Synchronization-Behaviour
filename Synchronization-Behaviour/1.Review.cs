@@ -43,7 +43,7 @@ namespace Synchronization_Challenge
             });
             var usingTasks = TimingHelper.TimeToRunInMilliseconds(() =>
             {
-                var task = Task.Run( ()=> sut.ThreeSecondOperation());
+                var task = Task.Run(() => sut.ThreeSecondOperation());
                 sut.TwoSecondOperation();
                 task.Wait();
             });

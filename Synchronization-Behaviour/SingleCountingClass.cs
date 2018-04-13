@@ -11,7 +11,7 @@ namespace Synchronization_Challenge
 
         public void AddOne()
         {
-            var _counterValue = GetCounter();
+            var _counterValue = GetCounterDirectlyWithDelay();
             _counter = _counterValue + 1;
         }
 
@@ -27,11 +27,11 @@ namespace Synchronization_Challenge
         {
             lock (thelock)
             {
-                return GetCounter();
+                return GetCounterDirectlyWithDelay();
             }
         }
 
-        private int GetCounter()
+        private int GetCounterDirectlyWithDelay()
         {
             var tmp = _counter;
             Thread.Sleep(DelayBetweenReadAndWrite);
@@ -41,7 +41,7 @@ namespace Synchronization_Challenge
         public void AddOneUsingReaderWriteSlim()
         {
             rwls.EnterUpgradeableReadLock();
-            var tmp = GetCounter();
+            var tmp = GetCounterDirectlyWithDelay();
             rwls.EnterWriteLock();
             _counter = tmp + 1;
             rwls.ExitWriteLock();
