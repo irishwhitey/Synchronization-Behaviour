@@ -22,7 +22,7 @@ namespace Synchronization_Challenge
                 var length = gg.GetResponseContentType();
                 Thread.Sleep(5000);
             });
-            Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(6000));
+            Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(5500));
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace Synchronization_Challenge
                 var p = task.Result;
 
             });
-            Assert.That(noAwaitTime, Is.LessThanOrEqualTo(6000));
+            Assert.That(noAwaitTime, Is.LessThanOrEqualTo(5500));
         }
     }
 
