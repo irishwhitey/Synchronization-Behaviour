@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Cache;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -13,98 +8,80 @@ namespace Synchronization_Challenge
     [TestFixture]
     class Asynchronization
     {
-        private int _magicTimeInMilliseconds = 5100;
+        private int codeExecutingTimeInMilliseconds = 100;
+        private int _sleepInTest = 5000;
 
         [Test]
         public void WaitingOnAsyncStuffIsExpensive()
         {
-            var gg = new GoogleGetter();
+            var fakeTaskFactory = new FakeLongRunningTaskCreator();
             var noAwaitTime = TimingHelper.TimeToRunInMilliseconds(() =>
             {
-                var length = gg.GetResponseContentType();
-                Thread.Sleep(5000);
+                var length = fakeTaskFactory.UsingSyncMethodWhichTakesThreeSecondsToComeBack();
+                Thread.Sleep(_sleepInTest);
             });
-            Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(_magicTimeInMilliseconds));
-
+            Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(_sleepInTest + TimeSpan.FromSeconds(3).TotalMilliseconds));
         }
 
-        //[Test]
-        //public void NotWaitingOnAsyncStuffIsBetter()
-        //{
-        //    var gg = new GoogleGetter();
-        //    var noAwaitTime = TimingHelper.TimeToRunInMilliseconds(() =>
-        //    {
-        //        var task = gg.GetResponseContentTypeAsync();
-        //        Thread.Sleep(5000);
-        //        var p = task.Result;
+        [Test]
+        public void NotWaitingOnAsyncStuffIsBetter()
+        {
+            var fakeTaskFactory = new FakeLongRunningTaskCreator();
+            var noAwaitTime = TimingHelper.TimeToRunInMilliseconds(() =>
+            {
+                var task = fakeTaskFactory.GetTaskWhichTakesThreeSecondsToRun();
+                Thread.Sleep(_sleepInTest);
+                var p = task.Result;
 
-        //    });
-        //    Assert.That(noAwaitTime, Is.LessThanOrEqualTo(_magicTimeInMilliseconds));
-        //}
+            });
+            Assert.That(noAwaitTime, Is.LessThanOrEqualTo(5000 + codeExecutingTimeInMilliseconds));
+        }
 
-        //[Test]
-        //public void CallingResultIsJustSynchronous()
-        //{
-        //    var gg = new GoogleGetter();
-        //    var noAwaitTime = TimingHelper.TimeToRunInMilliseconds(() =>
-        //    {
-        //        var length = gg.GetResponseContentTypeAsync().Result;
-        //        Thread.Sleep(5000);
+        [Test]
+        public void CallingResultIsJustSynchronous()
+        {
+            var fakeTaskFactory = new FakeLongRunningTaskCreator();
+            var noAwaitTime = TimingHelper.TimeToRunInMilliseconds(() =>
+            {
+                var length = fakeTaskFactory.GetTaskWhichTakesThreeSecondsToRun().Result;
+                Thread.Sleep(_sleepInTest);
 
-        //    });
-        //    Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(_magicTimeInMilliseconds));
-
-        //}
+            });
+            Assert.That(noAwaitTime, Is.GreaterThanOrEqualTo(_sleepInTest + TimeSpan.FromSeconds(3).TotalMilliseconds));
+        }
 
         [Test]
         public async Task OtherStuffHappensWhenAsyncCalled()
         {
-            var gg = new GoogleGetter();
-            var task = gg.GetResponseContentTypeAsync();
+            var fakeTaskFactory = new FakeLongRunningTaskCreator();
+            var task = fakeTaskFactory.GetTaskWhichTakesThreeSecondsToRun();
             Assert.IsFalse(task.IsCompleted);
             var p = await task;
             Assert.IsTrue(task.IsCompleted);
         }
     }
 
-    public class GoogleGetter
+    public class FakeLongRunningTaskCreator
     {
-        public string GetResponseContentType()
+        public string UsingSyncMethodWhichTakesThreeSecondsToComeBack()
         {
-            WebResponse resp = null;
-            var wr = CreateWebRequest("http://www.google.co.uk/");
-            try
-            {
-                resp = wr.GetResponse();
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            return resp.ContentType;
+            return CreateTask().Result;
         }
 
-        private static WebRequest CreateWebRequest(string url)
+        private static Task<string> CreateTask()
         {
-            var wr = WebRequest.Create(url);
-            wr.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
-            return wr;
+            var task = new Task<string>(() =>
+            {
+                Thread.Sleep(3000);
+                return "fred";
+            });
+            task.Start();
+            return task;
         }
 
-        public async Task<string> GetResponseContentTypeAsync()
+        public Task<string> GetTaskWhichTakesThreeSecondsToRun()
         {
-            WebResponse resp = null;
-            var wr = CreateWebRequest("http://www.google.com/");
-            try
-            {
-                resp = await wr.GetResponseAsync();
-            }
-            catch (Exception e)
-            {
-
-            }
-            return resp.ContentType;
+            return CreateTask();
         }
     }
 }
